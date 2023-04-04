@@ -15,14 +15,26 @@ const DESCRIPTION = (
   </>
 );
 const Home = () => {
-  const { contract, walletAddress } = useGlobalContext();
+  const { contract, walletAddress, setShowAlert } = useGlobalContext();
   const [playerName, setPlayerName] = useState("");
 
   const handleRegister = async () => {
     try {
-      await contract?.isPlayer(walletAddress);
+      const palyerExists = await contract?.isPlayer(walletAddress);
+      if (!palyerExists) {
+        await contract.registerPlayer(playerName, playerName);
+        setShowAlert({
+          status: true,
+          type: "info",
+          message: `${playerName} is being summoned!`,
+        });
+      }
     } catch (e) {
-      alert(e);
+      setShowAlert({
+        status: true,
+        type: "error",
+        message: e.message,
+      });
     }
   };
 
