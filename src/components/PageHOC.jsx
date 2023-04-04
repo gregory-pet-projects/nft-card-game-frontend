@@ -15,8 +15,20 @@ const PageHOC = (Component, title, description) => () => {
           onClick={() => navigate("/")}
         />
         <div className={styles.hocBodyWrapper}>
+          <div className="flex flex-row w-full">
+            <hi className={`flex ${styles.headText} head-text`}>{title}</hi>
+          </div>
+          <p className={`${styles.normalText} my-10`}>{description}</p>
           <Component />
         </div>
+        <p className={styles.footerText}>Mady with 💜 by GREGORY</p>
+      </div>
+      <div className="flex flex-1">
+        <img
+          alt="hero"
+          src={heroImg}
+          className="w-full xl:h-full object-cover"
+        />
       </div>
     </div>
   );
