@@ -4,22 +4,29 @@ import { logo, heroImg } from "../assets";
 import styles from "../styles";
 import { useGlobalContext } from "../context";
 import Alert from "./Alert";
+import { shortPreviewWalletAddress } from "../utils/service";
 
 const PageHOC = (Component, title, description) => () => {
-  const { showAlert } = useGlobalContext();
+  const { showAlert, walletAddress } = useGlobalContext();
   const navigate = useNavigate();
+  const userAddress = shortPreviewWalletAddress(walletAddress);
   return (
     <div className={styles.hocContainer}>
       {showAlert?.status && (
         <Alert message={showAlert?.message} type={showAlert?.type} />
       )}
       <div className={styles.hocContentBox}>
-        <img
-          src={logo}
-          alt="logo"
-          className={styles.hocLogo}
-          onClick={() => navigate("/")}
-        />
+        <div className="flex items-center justify-between">
+          <img
+            src={logo}
+            alt="logo"
+            className={styles.hocLogo}
+            onClick={() => navigate("/")}
+          />
+          {walletAddress && (
+            <div className={styles.userAddressLabel}>{userAddress}</div>
+          )}
+        </div>
         <div className={styles.hocBodyWrapper}>
           <div className="flex flex-row w-full">
             <h1 className={`flex ${styles.headText} head-text`}>{title}</h1>
