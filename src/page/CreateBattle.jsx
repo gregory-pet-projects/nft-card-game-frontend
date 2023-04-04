@@ -1,5 +1,5 @@
-import React from "react";
-import { CustomButton, CustomInput, PageHOC } from "../components";
+import React, { useState } from "react";
+import { CustomButton, CustomInput, PageHOC, GameLoad } from "../components";
 import styles from "../styles";
 import { useGlobalContext } from "../context";
 import { useNavigate } from "react-router-dom";
@@ -16,12 +16,22 @@ const DESCRIPTION =
 const CreateBattle = () => {
   const navigate = useNavigate();
   const { contract, battleName, setBattleName } = useGlobalContext();
+  const [waitBattle, setWaitBattle] = useState(false);
 
-  const createBattleHandler = () => {};
+  const createBattleHandler = async () => {
+    if (!battleName || !battleName.trim()) return null;
+
+    try {
+      await contract.createBattle(battleName);
+    } catch (e) {
+      console.error(e);
+    }
+  };
   const joinBattleHandler = () => navigate("/join-battle");
 
   return (
     <>
+      {waitBattle && <GameLoad />}
       <div className="flex flex-col mb-5">
         <CustomInput
           label="Battle"
