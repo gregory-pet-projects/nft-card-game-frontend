@@ -18,6 +18,7 @@ export const GlobalContextProvider = ({ children }) => {
   const [contract, setContract] = useState(null);
   const [provider, setProvider] = useState(null);
   const [showAlert, setShowAlert] = useState(defaultAlertState);
+  const [battleName, setBattleName] = useState("");
   const navigate = useNavigate();
   useEffect(() => {
     if (contract) {
@@ -73,6 +74,8 @@ export const GlobalContextProvider = ({ children }) => {
         walletAddress,
         showAlert,
         setShowAlert,
+        battleName,
+        setBattleName,
       }}
     >
       {children}

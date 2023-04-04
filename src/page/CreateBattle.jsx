@@ -1,5 +1,8 @@
 import React from "react";
-import { PageHOC } from "../components";
+import { CustomButton, CustomInput, PageHOC } from "../components";
+import styles from "../styles";
+import { useGlobalContext } from "../context";
+import { useNavigate } from "react-router-dom";
 
 const TITLE = (
   <>
@@ -11,10 +14,31 @@ const DESCRIPTION =
   "Create your own battle and wait for ither players to join you";
 
 const CreateBattle = () => {
+  const navigate = useNavigate();
+  const { contract, battleName, setBattleName } = useGlobalContext();
+
+  const createBattleHandler = () => {};
+  const joinBattleHandler = () => navigate("/join-batle");
+
   return (
-    <div>
-      <h1 className="text-white text-xl">Hello </h1>
-    </div>
+    <>
+      <div className="flex flex-col mb-5">
+        <CustomInput
+          label="Battle"
+          placeholder="Enter battle name"
+          value={battleName}
+          onChange={setBattleName}
+        />
+        <CustomButton
+          title="Create Battle"
+          onClick={createBattleHandler}
+          restStyles="mt-6"
+        />
+      </div>
+      <p className={styles.infoText} onClick={joinBattleHandler}>
+        Or join already existing battles
+      </p>
+    </>
   );
 };
 
