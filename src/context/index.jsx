@@ -13,12 +13,19 @@ const defaultAlertState = {
   message: "",
 };
 
+const defaultGameData = {
+  payers: [],
+  pendingBattles: [],
+  activeBattle: null,
+};
+
 export const GlobalContextProvider = ({ children }) => {
   const [walletAddress, setWalletAddress] = useState("");
   const [contract, setContract] = useState(null);
   const [provider, setProvider] = useState(null);
   const [showAlert, setShowAlert] = useState(defaultAlertState);
   const [battleName, setBattleName] = useState("");
+  const [gameData, setGameData] = useState(defaultGameData);
   const navigate = useNavigate();
   useEffect(() => {
     if (contract) {
@@ -67,6 +74,36 @@ export const GlobalContextProvider = ({ children }) => {
     setSmartContractAndProvider();
   }, []);
 
+  //Set the game data to the state
+  const fetchGameData = async () => {
+    if (contract) {
+      const fetchedBattles = await contract.getAllBattles();
+      const pendingBattles = fetchedBattles.filter(
+        (battle) => battle.battleStatus === 0
+      );
+      let activeBattle = null;
+
+      fetchedBattles.forEach((battle) => {
+        if (
+          battle.players.find(
+            (player) => player.toLowerCase() === walletAddress.toLowerCase()
+          )
+        ) {
+          if (battle.winner.startsWith("0x00")) {
+            activeBattle = battle;
+          }
+        }
+      });
+
+      setGameData({ pendingBattles: pendingBattles.slice(1), activeBattle });
+    }
+  };
+  useEffect(() => {
+    if (contract) {
+      fetchGameData();
+    }
+  }, [contract]);
+
   return (
     <GlobalContext.Provider
       value={{
@@ -76,6 +113,7 @@ export const GlobalContextProvider = ({ children }) => {
         setShowAlert,
         battleName,
         setBattleName,
+        gameData,
       }}
     >
       {children}

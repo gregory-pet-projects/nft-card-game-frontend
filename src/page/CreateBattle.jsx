@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CustomButton, CustomInput, PageHOC, GameLoad } from "../components";
 import styles from "../styles";
 import { useGlobalContext } from "../context";
@@ -15,7 +15,7 @@ const DESCRIPTION =
 
 const CreateBattle = () => {
   const navigate = useNavigate();
-  const { contract, battleName, setBattleName } = useGlobalContext();
+  const { contract, battleName, setBattleName, gameData } = useGlobalContext();
   const [waitBattle, setWaitBattle] = useState(false);
 
   const createBattleHandler = async () => {
@@ -28,6 +28,12 @@ const CreateBattle = () => {
     }
   };
   const joinBattleHandler = () => navigate("/join-battle");
+
+  useEffect(() => {
+    if (gameData?.activeBattle?.battleStatus === 0) {
+      setWaitBattle(true);
+    }
+  }, [gameData]);
 
   return (
     <>
