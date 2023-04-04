@@ -2,6 +2,8 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { ethers } from "ethers";
 import Web3Modal from "web3modal";
 import { ABI, ADDRESS } from "../contract";
+import { createEventListeners } from "./createEventListeneres";
+import { useNavigate } from "react-router-dom";
 
 const GlobalContext = createContext();
 
@@ -15,8 +17,19 @@ export const GlobalContextProvider = ({ children }) => {
   const [walletAddress, setWalletAddress] = useState("");
   const [contract, setContract] = useState(null);
   const [provider, setProvider] = useState(null);
-
   const [showAlert, setShowAlert] = useState(defaultAlertState);
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (contract) {
+      createEventListeners({
+        navigate,
+        contract,
+        provider,
+        walletAddress,
+        setShowAlert,
+      });
+    }
+  }, [contract]);
 
   useEffect(() => {
     if (showAlert?.status) {
