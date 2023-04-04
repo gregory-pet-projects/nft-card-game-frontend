@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { CustomInput, PageHOC } from "../components";
+import { CustomButton, CustomInput, PageHOC } from "../components";
 import { useGlobalContext } from "../context";
 
 const TITLE = (
@@ -18,6 +18,14 @@ const Home = () => {
   const { contract, walletAddress } = useGlobalContext();
   const [playerName, setPlayerName] = useState("");
 
+  const handleRegister = async () => {
+    try {
+      await contract?.isPlayer(walletAddress);
+    } catch (e) {
+      alert(e);
+    }
+  };
+
   return (
     <div className="flex flex-col">
       <CustomInput
@@ -25,6 +33,11 @@ const Home = () => {
         placeholder="Enter your player name"
         value={playerName}
         onChange={setPlayerName}
+      />
+      <CustomButton
+        title="Register"
+        onClick={handleRegister}
+        restStyles="mt-6"
       />
     </div>
   );
