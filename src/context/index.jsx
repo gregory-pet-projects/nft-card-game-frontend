@@ -23,9 +23,8 @@ export const GlobalContextProvider = ({ children }) => {
       const timer = setTimeout(() => {
         setShowAlert(defaultAlertState);
       }, 5000);
+      return () => clearTimeout(timer);
     }
-
-    return () => clearTimeout(timer);
   }, [showAlert]);
 
   const setSmartContractAndProvider = async () => {

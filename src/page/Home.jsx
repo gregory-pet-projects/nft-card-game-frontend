@@ -32,8 +32,8 @@ const Home = () => {
     } catch (e) {
       setShowAlert({
         status: true,
-        type: "error",
-        message: e.message,
+        type: "failure",
+        message: "Something went wrong!",
       });
     }
   };
