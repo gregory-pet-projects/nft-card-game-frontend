@@ -18,7 +18,7 @@ const CreateBattle = () => {
   const { contract, battleName, setBattleName } = useGlobalContext();
 
   const createBattleHandler = () => {};
-  const joinBattleHandler = () => navigate("/join-batle");
+  const joinBattleHandler = () => navigate("/join-battle");
 
   return (
     <>

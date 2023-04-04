@@ -1,3 +1,4 @@
 import CreateBattle from "./CreateBattle";
 import Home from "./Home";
-export { CreateBattle, Home };
+import JoinBattle from "./JoinBattle";
+export { CreateBattle, Home, JoinBattle };
