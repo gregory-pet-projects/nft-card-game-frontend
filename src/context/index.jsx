@@ -5,10 +5,29 @@ import { ABI, ADDRESS } from "../contract";
 
 const GlobalContext = createContext();
 
+const defaultAlertState = {
+  status: false,
+  type: "info",
+  message: "",
+};
+
 export const GlobalContextProvider = ({ children }) => {
   const [walletAddress, setWalletAddress] = useState("");
   const [contract, setContract] = useState(null);
   const [provider, setProvider] = useState(null);
+
+  const [showAlert, setShowAlert] = useState(defaultAlertState);
+
+  useEffect(() => {
+    if (showAlert?.status) {
+      const timer = setTimeout(() => {
+        setShowAlert(defaultAlertState);
+      }, 5000);
+    }
+
+    return () => clearTimeout(timer);
+  }, [showAlert]);
+
   const setSmartContractAndProvider = async () => {
     const web3Modal = new Web3Modal();
     const connection = await web3Modal.connect();
@@ -40,6 +59,8 @@ export const GlobalContextProvider = ({ children }) => {
       value={{
         contract,
         walletAddress,
+        showAlert,
+        setShowAlert,
       }}
     >
       {children}
