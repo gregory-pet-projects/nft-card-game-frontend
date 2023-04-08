@@ -18,23 +18,26 @@ const CreateBattle = () => {
   const { contract, battleName, setBattleName, gameData } = useGlobalContext();
   const [waitBattle, setWaitBattle] = useState(false);
 
-  const createBattleHandler = async () => {
-    if (!battleName || !battleName.trim()) return null;
-
-    try {
-      await contract.createBattle(battleName);
-    } catch (e) {
-      console.error(e);
-    }
-  };
-  const joinBattleHandler = () => navigate("/join-battle");
-
   useEffect(() => {
-    if (gameData?.activeBattle?.battleStatus === 0) {
+    if (gameData?.activeBattle?.battleStatus === 1) {
+      navigate(`/battle/${gameData.activeBattle.name}`);
+    } else if (gameData?.activeBattle?.battleStatus === 0) {
       setWaitBattle(true);
     }
   }, [gameData]);
 
+  const createBattleHandler = async () => {
+    if (battleName === "" || battleName.trim() === "") return null;
+
+    try {
+      await contract.createBattle(battleName);
+
+      setWaitBattle(true);
+    } catch (error) {
+      setErrorMessage(error);
+    }
+  };
+  const joinBattleHandler = () => navigate("/join-battle");
   return (
     <>
       {waitBattle && <GameLoad />}
