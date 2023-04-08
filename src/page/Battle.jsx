@@ -13,6 +13,8 @@ const Battle = () => {
     showAlert,
     setShowAlert,
     battleGround,
+    player1Ref,
+    player2Ref,
   } = useGlobalContext();
   const [player1, setPlayer1] = useState({});
   const [player2, setPlayer2] = useState({});
@@ -59,11 +61,38 @@ const Battle = () => {
     }
   };
 
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!gameData?.activeBattle) navigate("/");
+    }, [2000]);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   useEffect(() => {
     if (contract && gameData?.activeBattle) {
       getPlayerInfo();
     }
   }, [contract, gameData, battleGround]);
+
+  const makeAMove = async (choice) => {
+    playAudio(choice === 1 ? attackSound : defenseSound);
+
+    try {
+      await contract.attackOrDefendChoice(choice, battleName, {
+        gasLimit: 200000,
+      });
+
+      setShowAlert({
+        status: true,
+        type: "info",
+        message: `Initiating ${choice === 1 ? "attack" : "defense"}`,
+      });
+    } catch (error) {
+      setErrorMessage(error);
+    }
+  };
 
   return (
     <div
@@ -77,7 +106,7 @@ const Battle = () => {
         <Card
           card={player2}
           title={player2?.playerName}
-          cardRef={""}
+          cardRef={player2Ref}
           playerTwo
         />
         <div className={"flex items-center flex-row"}>
@@ -89,7 +118,7 @@ const Battle = () => {
           <Card
             card={player1}
             title={player1?.playerName}
-            cardRef={""}
+            cardRef={player1Ref}
             restStyles="mt-3"
           />
           <ActionButton
