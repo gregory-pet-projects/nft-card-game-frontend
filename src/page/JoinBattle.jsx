@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { CustomButton, PageHOC } from "../components";
 import { useGlobalContext } from "../context";
 import styles from "../styles";
+import { useEffect } from "react";
 
 const TITLE = (
   <>
@@ -23,21 +24,27 @@ const JoinBattle = () => {
     (battle) => !battle.players.includes(walletAddres)
   );
 
+  useEffect(() => {
+    if (gameData?.activeBattle?.battleStatus === 1)
+      navigate(`/battle/${gameData.activeBattle.name}`);
+  }, [gameData]);
+
   const handleJoinBattle = async (battleName) => {
     setBattleName(battleName);
-    setShowAlert({
-      status: true,
-      type: "success",
-      message: `Joining ${battleName}`,
-    });
+
     try {
       await contract.joinBattle(battleName);
 
-      setShowAlert({ status: true, type: 'success', message: `Joining ${battleName}` });
+      setShowAlert({
+        status: true,
+        type: "success",
+        message: `Joining ${battleName}`,
+      });
     } catch (error) {
-      setErrorMessage(error);
+      //setErrorMessage(error);
     }
   };
+
   return (
     <>
       <h2 className={styles.joinHeadText}>Availabel Battles:</h2>
