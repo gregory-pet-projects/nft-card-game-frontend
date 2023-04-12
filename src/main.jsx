@@ -4,9 +4,8 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 
 import "./index.css";
-import { Battle, CreateBattle, Home, JoinBattle } from "./page";
+import { Battle, CreateBattle, Home, JoinBattle, BattleGround } from "./page";
 import { GlobalContextProvider } from "./context";
-import BattleGround from "./page/BattleGround";
 import OnboardModal from "./components/OnboardModal";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
