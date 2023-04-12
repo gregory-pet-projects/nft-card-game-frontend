@@ -11,7 +11,7 @@ const marginIndexing = (index) => (index !== healtPoints - 1 ? "mr-1" : "mr-0");
 const PlayerInfo = ({ player, playerIcon, mt }) => {
   const health = [...Array(player?.health || 0).keys()];
   const playerNumber = mt ? "1" : "2";
-  console.log({ health });
+
   return (
     <div className={`${styles.flexCenter} ${mt ? "mt-4" : "mb-4"}`}>
       <img
