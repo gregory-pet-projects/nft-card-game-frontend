@@ -1,52 +1,62 @@
+/* eslint-disable prefer-destructuring */
 import React, { useEffect, useState } from "react";
-import { useGlobalContext } from "../context";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+
 import styles from "../styles";
-import { attack, defense, player01, player02 } from "../assets";
-import { ActionButton, Card, GameInfo, PlayerInfo } from "../components";
+import { ActionButton, Alert, Card, GameInfo, PlayerInfo } from "../components";
+import { useGlobalContext } from "../context";
+import {
+  attack,
+  attackSound,
+  defense,
+  defenseSound,
+  player01 as player01Icon,
+  player02 as player02Icon,
+} from "../assets";
+import { playAudio } from "../utils/animation.js";
 
 const Battle = () => {
   const {
     contract,
     gameData,
-    walletAdress,
+    battleGround,
+    walletAddress,
+    setErrorMessage,
     showAlert,
     setShowAlert,
-    battleGround,
     player1Ref,
     player2Ref,
   } = useGlobalContext();
-  const [player1, setPlayer1] = useState({});
   const [player2, setPlayer2] = useState({});
+  const [player1, setPlayer1] = useState({});
   const { battleName } = useParams();
   const navigate = useNavigate();
 
   const getPlayerInfo = async () => {
     try {
-      let player01Adress = null;
-      let player02Adress = null;
-
-      const player1DataAdress = gameData?.activeBattle?.player[0];
-      const player2DataAdress = gameData?.activeBattle?.player[1];
-      if (player1DataAdress.toLowerCase() === walletAdress.toLowerCase()) {
-        player01Adress = player1DataAdress;
-        player02Adress = player2DataAdress;
+      let player01Address = null;
+      let player02Address = null;
+      if (
+        gameData.activeBattle.players[0].toLowerCase() ===
+        walletAddress.toLowerCase()
+      ) {
+        player01Address = gameData.activeBattle.players[0];
+        player02Address = gameData.activeBattle.players[1];
       } else {
-        player01Adress = player2DataAdress;
-        player02Adress = player1DataAdress;
+        player01Address = gameData.activeBattle.players[1];
+        player02Address = gameData.activeBattle.players[0];
       }
 
-      const p1TokenData = await contract.getPlayerToken(player01Adress);
-      const player01 = await contract.getPlayer(player01Adress);
-      const player02 = await contract.getPlayer(player02Adress);
+      const p1TokenData = await contract.getPlayerToken(player01Address);
+      const player01 = await contract.getPlayer(player01Address);
+      const player02 = await contract.getPlayer(player02Address);
 
       const p1Att = p1TokenData.attackStrength.toNumber();
       const p1Def = p1TokenData.defenseStrength.toNumber();
-
       const p1H = player01.playerHealth.toNumber();
       const p1M = player01.playerMana.toNumber();
       const p2H = player02.playerHealth.toNumber();
-      const p2M = player02.playerHealth.toNumber();
+      const p2M = player02.playerMana.toNumber();
 
       setPlayer1({
         ...player01,
@@ -56,11 +66,14 @@ const Battle = () => {
         mana: p1M,
       });
       setPlayer2({ ...player02, att: "X", def: "X", health: p2H, mana: p2M });
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      setErrorMessage(error.message);
     }
   };
 
+  useEffect(() => {
+    if (contract && gameData.activeBattle) getPlayerInfo();
+  }, [contract, gameData, battleName]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -69,12 +82,6 @@ const Battle = () => {
 
     return () => clearTimeout(timer);
   }, []);
-
-  useEffect(() => {
-    if (contract && gameData?.activeBattle) {
-      getPlayerInfo();
-    }
-  }, [contract, gameData, battleGround]);
 
   const makeAMove = async (choice) => {
     playAudio(choice === 1 ? attackSound : defenseSound);
@@ -99,9 +106,11 @@ const Battle = () => {
       className={`${styles.flexBetween} ${styles.gameContainer} ${battleGround}`}
     >
       {showAlert?.status && (
-        <Alert message={showAlert?.message} type={showAlert?.type} />
+        <Alert type={showAlert.type} message={showAlert.message} />
       )}
-      <PlayerInfo player={player2} playerIcon={player02} mt />
+
+      <PlayerInfo player={player2} playerIcon={player02Icon} mt />
+
       <div className={`${styles.flexCenter} flex-col my-10`}>
         <Card
           card={player2}
@@ -109,26 +118,31 @@ const Battle = () => {
           cardRef={player2Ref}
           playerTwo
         />
-        <div className={"flex items-center flex-row"}>
+
+        <div className="flex items-center flex-row">
           <ActionButton
             imgUrl={attack}
-            handleClick={() => undefined}
+            handleClick={() => makeAMove(1)}
             restStyles="mr-2 hover:border-yellow-400"
           />
+
           <Card
             card={player1}
             title={player1?.playerName}
             cardRef={player1Ref}
             restStyles="mt-3"
           />
+
           <ActionButton
             imgUrl={defense}
-            handleClick={() => undefined}
+            handleClick={() => makeAMove(2)}
             restStyles="ml-6 hover:border-red-600"
           />
         </div>
       </div>
-      <PlayerInfo player={player1} playerIcon={player01} />
+
+      <PlayerInfo player={player1} playerIcon={player01Icon} />
+
       <GameInfo />
     </div>
   );
