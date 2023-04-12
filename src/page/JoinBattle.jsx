@@ -15,8 +15,14 @@ const DESCRIPTION = "Join already existing battles";
 
 const JoinBattle = () => {
   const navigate = useNavigate();
-  const { contract, gameData, setShowAlert, setBattleName, walletAddres } =
-    useGlobalContext();
+  const {
+    contract,
+    gameData,
+    setShowAlert,
+    setBattleName,
+    walletAddres,
+    setErrorMessage,
+  } = useGlobalContext();
   const createBattleHandler = () => navigate("/create-battle");
   const isAnyPendingBattles = !!gameData?.pendingBattles?.length;
 
@@ -41,7 +47,7 @@ const JoinBattle = () => {
         message: `Joining ${battleName}`,
       });
     } catch (error) {
-      //setErrorMessage(error);
+      setErrorMessage(error);
     }
   };
 
