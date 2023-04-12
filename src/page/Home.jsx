@@ -17,7 +17,8 @@ const DESCRIPTION = (
 );
 const Home = () => {
   const navigate = useNavigate();
-  const { contract, walletAddress, setShowAlert } = useGlobalContext();
+  const { contract, walletAddress, setShowAlert, gameData } =
+    useGlobalContext();
   const [playerName, setPlayerName] = useState("");
 
   const handleRegister = async () => {
@@ -53,6 +54,12 @@ const Home = () => {
       checkForPlayerToken();
     }
   }, [contract]);
+
+  useEffect(() => {
+    if (gameData.activeBattle) {
+      navigate(`/battle/${gameData.activeBattle.name}`);
+    }
+  }, [gameData]);
 
   return (
     <div className="flex flex-col">
